@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, flash, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -13,15 +14,20 @@ class Blog(db.Model):     #create Blog class
     title = db.Column(db.String(120))
     body = db.Column(db.String(500))
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    pub_date = db.Column(db.DateTime)
 
-    def __init__(self, title, body, owner): #constructor
+    def __init__(self, title, body, owner, pub_date=None): #constructor
         self.title = title
         self.body = body
         self.owner = owner
+        if pub_date is None:
+            pub_date = datetime.now()
+        self.pub_date = pub_date
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)  
-    username = db.Column(db.String(120)) #make unique ****************
+    username = db.Column(db.String(120), unique=True) #make unique ****************
     password = db.Column(db.String(120))
     blogs = db.relationship('Blog', backref='owner')
 
@@ -101,16 +107,21 @@ def index():
     
 @app.route("/blog", methods=["GET"])   
 def blog():
-
+    #get all the blogs
     blogs = Blog.query.all()
     return render_template('blog.html', title="Build A Blog", blogs=blogs)
 
 @app.route("/blogpost", methods=["GET"])
 def blogpost():
-
+    
+    #TODO confirm this
+    
     blog_id = request.args.get('id')
     blog = Blog.query.filter_by(id=blog_id).first()
-    return render_template('blogpost.html', blog=blog)
+  
+    user = User.query.filter_by(id=blog_id).first()
+    
+    return render_template('blogpost.html', blog=blog, user=user)
 
 @app.route("/newpost", methods=["POST", "GET"])    
 def newpost():
