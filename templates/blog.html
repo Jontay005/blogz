@@ -5,18 +5,18 @@
 
  <form  method='post' >
 <h1> {{ title }} </h1>
-<p>Logged in as {{ username }}</p> 
+<p></p> 
  </form>
 
  {% if blogs|length == 0 %}
     <h1> No Blog Post Yet</h1>
  {% else %}
-  
         <p> {% for blog in blogs %} </p>
         <div>
             <h2> <a href='/blogpost?id={{blog.id}}' >
                  {{ blog.title }} </a> </h2> 
             <p>{{ blog.body }}</p>
+            <label> written by <a href='/blog?user_id={{blog.owner.id}}'>{{ blog.owner.username}}</a></label>
         </div>
         {% endfor %}
  

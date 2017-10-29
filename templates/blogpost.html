@@ -7,8 +7,7 @@
 <div>
     <h2>{{ blog.title }} </a> </h2> 
    <p>{{ blog.body }}</p>
-   <label> written by <a href='/blogpost?id={{blog.id}}'> {{ user.username}}</a></label>
-     
+   <label> written by <a href='/blog?user_id={{blog.id}}'> {{ user.username}}</a></label>
 </div>
 </form>
 
